@@ -1,0 +1,68 @@
+.Dd Feb 24, 2017
+.Dt IPNOTFD 8
+.Os
+.\"
+.Sh NAME
+.Nm ipnotfd ,
+.Nd Interface address notification daemon
+.\"
+.Sh SYNOPSIS
+.Nm
+.Op Fl nf
+.Op Fl a Ar 4|6|all
+.Op Fl s Ar script
+.\"
+.Sh DESCRIPTION
+.Pp
+.Nm
+monitors the addresses configured on a network interface,
+taking action whenever they change. This enables management tasks
+such as firewall reconfiguration and dynamic DNS updates to be
+performed as soon as they are needed. This is useful for server
+hosts that use DHCP-assigned public-facing addresses.
+.Pp
+On address change,
+.Nm
+logs the address change to stdout if running in the foreground
+or via
+.Xr syslog 3
+, if running as a daemon. In addition, if a script is
+specified, it will be invoked with the address as the script's
+sole argument.
+.Pp
+.Nm
+is intended for simple configuration where there is one address
+for each IP protocol family (that is, IPv4 and IPv6). If there are additional
+addresses on the interface, notifications will happen for them and the effect
+of running a script for each may not be what you intend. Under normal
+circumstances,
+.Xr dhclient 1
+won't create such unusual configurations. If your interfaces have
+aliases, it's likely that you are managing the addresses manually
+and probably don't need to be informed via
+.Nm
+that they've changed. You can still do so, however.
+
+.Sh COMMAND LINE OPTIONS
+.Pp
+.Bl -tag -width indent
+.It Fl n
+No address check on startup. The default is to act on existing addresses, in addition to responding to address add events
+.It Fl f
+Run in the foreground. Notification messages are generated to standard error
+instead of
+.Xr syslog 3 . The default is to run as a daemon.
+.It Fl a
+Address family to monitor. Valid options are
+.Ar 4
+,
+.Ar 6
+and
+.Ar all
+.
+The default is
+.Ar 4
+, to notify for IPv4 addresses.
+.It Fl s
+Script to run on address add. The default is to only notify without running a script
+.El
