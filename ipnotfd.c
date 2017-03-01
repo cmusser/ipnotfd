@@ -163,7 +163,7 @@ handle_intf_addr(struct ipnotf_state *ipnotf, char *intf_name, struct sockaddr *
 		log_msg(ipnotf, LOG_NOTICE, "%s %s: %s", intf_name,
 		    UPDATE_STATUS_STR(update_status), addr_str);
 		if (strlen(ipnotf->script_path) > 0 &&
-		    (update_status == INITIAL && update_status == CHANGED)) {
+		    (update_status == INITIAL || update_status == CHANGED)) {
 			snprintf(cmd, sizeof(cmd), "%s %s", ipnotf->script_path, addr_str);
 			spawn_subprocess(ipnotf, cmd);
 		}
